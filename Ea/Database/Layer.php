@@ -1,21 +1,45 @@
 <?php
 
-
 namespace Ea\Database;
 
 require_once 'Database.php';
 
 class Layer extends Database {
 
-    protected $statement;
+    protected $table;
+    protected $values;
     
+    protected $returnId = false;
+    protected $returnBool = false;
+    
+    protected $isDone = false;
+
     public function __construct($st, $val, $tb) {
 
-        $this->statement = new \stdClass;
-        
-        $this->statement->table = strtolower($tb);
-        $this->statement->values = (empty($val) ? $st : [$st => $val]);
-        
-        
+        $this->table = strtolower($tb);
+        $this->values = (empty($val) ? $st : [$st => $val]);
+    
+        $self = $this;
+
+        $shutdown = function () use (&$self) {
+            $self->execute();
+        };
+        register_shutdown_function($shutdown);
+
     }
+    
+    protected function execute(){}
+    
+    public function getID(){
+        $this->returnId = true;
+        
+        return $this->execute();
+    }
+    
+    public function getBool(){
+        $this->returnBool = true;
+        
+        return $this->execute();
+    }
+
 }

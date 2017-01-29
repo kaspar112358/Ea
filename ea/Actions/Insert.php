@@ -2,53 +2,49 @@
 
 namespace Ea\Actions;
 
-require_once '../Database/Layer.php';
+require_once \Ea\Engine::path().'/Database/Layer.php';
 
-class Insert extends \Ea\Database\Layer {
+use Ea\Database\Layer as Layer;
+
+class Insert extends Layer {
+    
+    private $isNonExistent = false;
 
     public function isNonExistent($boolOrArrayOrKey = true, $valueOfKey = ""){
 
-        $this->statement->isNonExistent = (empty($valueOfKey) ? $boolOrArrayOrKey : [$boolOrArrayOrKey => $valueOfKey]);
+        $this->isNonExistent = (empty($valueOfKey) ? $boolOrArrayOrKey : [$boolOrArrayOrKey => $valueOfKey]);
         
         return $this;
     }
-    
-    public function returnId(){
-        $this->statement->returnId = true;
-        
-        return $this;
-    }
-    
-    public function execute(){
-        
-        $statement = $this->handleRequest();
-        
-        if(array_key_exists("isNonExistent", $this->statement) && $this->statement->isNonExistent && !$this->doesItExist()) return false;
 
-        return $this->executeStatement($statement, $this->statement->values, (array_key_exists("returnId", $this->statement) && $this->statement->returnId ? "id" : "bool"));
+    protected function execute(){
+        
+        if(!$this->isDone){
+
+            $statement = $this->handleRequest();
+
+            if($this->isNonExistent && !$this->doesItExist()) return false;
+            
+            $this->isDone = true;
+
+            return $this->executeStatement($statement, $this->values, ($this->returnId ? "id" : "bool"));
+        }
+        
+        return false;
     }
     
     /* Private functions */
     
     private function handleRequest(){
-        $statement = "INSERT INTO ".$this->statement->table;
+        $statement = "INSERT INTO ".$this->table;
         
-        foreach($this->statement as $key => $state){
-            switch ($key) {
-                case "values":
-                    $statement .= $this->handleValues();
-
-                    break;
-                default:
-                    break;
-            }
-        }
+        $statement .= $this->handleValues();
         
         return $statement;
     }
     
     private function handleValues(){
-        $values = $this->statement->values;
+        $values = $this->values;
         
         $keys = "";
         $vals = "";
@@ -71,11 +67,11 @@ class Insert extends \Ea\Database\Layer {
     
     private function doesItExist(){
         
-        $statement = "SELECT * FROM ".$this->statement->table." WHERE ";
+        $statement = "SELECT * FROM ".$this->table." WHERE ";
         
-        $param = $this->statement->isNonExistent;
+        $param = $this->isNonExistent;
         
-        $values = (is_array($param) ? $param : $this->statement->values);
+        $values = (is_array($param) ? $param : $this->values);
         
         $i = 0;
         $no = count($values);

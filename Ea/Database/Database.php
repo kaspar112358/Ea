@@ -10,7 +10,7 @@ class Database {
         return new PDO('mysql:host=localhost;dbname=ea','root','');
     }
     
-    public function executeStatement($statement, $data = [], $withmode = "bool"){
+    protected function executeStatement($statement, $data = [], $withmode = "bool"){
         
         $connection = $this->connection();
         
@@ -23,7 +23,7 @@ class Database {
                     return true;
                     break;
                 case "id":
-                    return $connection->lastInsertId();
+                    return (int) $connection->lastInsertId();
                     break;
                 case "results":
                     return $sth->fetchAll(PDO::FETCH_OBJ);

@@ -14,8 +14,12 @@ class Engine {
         return $class;
     }
     
+    public static function path(){
+        return dirname(__FILE__);
+    }
+    
     public static function insert($keyOrArray, $valueOfKey = ""){
-        
+
         require_once 'Actions/Insert.php';
 
         return new \Ea\Actions\Insert($keyOrArray, $valueOfKey, Engine::table(get_called_class()));
