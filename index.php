@@ -1,20 +1,23 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-    </head>
-    <body>
+
         <?php
-        // put your code here
         require_once 'Food.php';
-        Food::insert("name", "hans")->dontExist()->execute();
-        Food::insert("name", "klaus")->dontExist()->execute();
+        
+        // Insert a single value ~ returns success as bool
+        //Food::insert("name", "Burger")->execute();
+        
+        // Insert multiple values ~ returns success as bool
+        //Food::insert(["name" => "Pancakes", "type" => "Dessert"])->execute();
+        
+        // Insert value if "Humus" does not exist ~ returns success as bool
+        //Food::insert("name", "Humus")->isNonExistent()->execute();
+        
+        // Insert value if "Burger" does not exist ~ returns success as bool
+        //Food::insert("name", "Humus")->isNonExistent("name", "Burger")->execute();
+        
+        // Insert value if "Pancakes" with type "Dessert" does not exist ~ returns success as bool
+        //Food::insert("name", "Humus")->isNonExistent(["name" => "Pancakes", "type" => "Dessert"])->execute();
+        
+        // Insert a single value ~ returns id of inserted row
+        //Food::insert("name", "Burger")->returnId()->execute();
+        
         ?>
-    </body>
-</html>
